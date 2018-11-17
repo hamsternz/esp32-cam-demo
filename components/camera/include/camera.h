@@ -68,6 +68,8 @@ typedef struct {
     camera_framesize_t frame_size;
 
     int jpeg_quality;
+    int reset_active_high; /*!< is the reset signal active high? */
+    int long_reset;        /*!< Should a long pause be used during the reset */
 } camera_config_t;
 
 #define ESP_ERR_CAMERA_BASE 0x20000

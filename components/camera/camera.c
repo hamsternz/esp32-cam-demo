@@ -36,6 +36,7 @@
 #include "camera.h"
 #include "camera_common.h"
 #include "xclk.h"
+#include "twi.h"
 #if CONFIG_OV2640_SUPPORT
 #include "ov2640.h"
 #endif
@@ -138,18 +139,30 @@ esp_err_t camera_probe(const camera_config_t* config, camera_model_t* out_camera
     conf.mode = GPIO_MODE_OUTPUT;
     gpio_config(&conf);
 
-    gpio_set_level(config->pin_reset, 0);
-    delay(10);
-    gpio_set_level(config->pin_reset, 1);
-    delay(10);
+    gpio_set_level(config->pin_reset, config->reset_active_high ? 1: 0);
+    delay(config->long_reset ? 3000 : 10);
+    gpio_set_level(config->pin_reset, config->reset_active_high ? 0: 1);
+    delay(config->long_reset ? 2000 : 10);
+
 
     ESP_LOGD(TAG, "Searching for camera address");
     /* Probe the sensor */
     delay(10);
+
     uint8_t slv_addr = SCCB_Probe();
+#if CONFIG_OV2640_SUPPORT
+    /* If we are using the OV2640 we may need to swap register sets
+       and probe for a second time */
+    if (slv_addr == 0) {
+      uint8_t buf[] = {0xff, 0x01};
+      twi_writeTo(0x30, buf, 2, true);
+      slv_addr = SCCB_Probe();
+    }
+#endif
     if (slv_addr == 0) {
         *out_camera_model = CAMERA_NONE;
         return ESP_ERR_CAMERA_NOT_DETECTED;
+       
     }
     s_state->sensor.slv_addr = slv_addr;
     ESP_LOGD(TAG, "Detected camera at address=0x%02x", slv_addr);

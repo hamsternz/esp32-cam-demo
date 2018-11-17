@@ -1,6 +1,6 @@
 # ESP32 Camera Demo
 
-Code provided in this repository gets the image from camera and prints it out as ASCII art to the serial port.
+Code provided in this repository serves images from camera over WiFi via http
 
 ## Build Status
 
@@ -75,8 +75,8 @@ Specific pins used in this example to connect ESP32 and camera are shown in tabl
 | Pixel Data Bit 5 | D7 | IO39 | IO18 |
 | Pixel Data Bit 6 | D8 | IO34 | IO36 |
 | Pixel Data Bit 7 | D9 | IO35 | IO19 |
-| Camera Reset | RESET | IO2 | IO15 |
-| Camera Power Down | PWDN | *see Note 3* | *see Note 3* |
+| Camera Reset *see Note 3* | RESET | IO2 | IO15 |
+| Camera Power Down | PWDN | *see Note 4* | *see Note 4* |
 | Power Supply 3.3V | 3V3 | 3V3 | 3V3 |
 | Ground | GND | GND | GND |
 
@@ -85,7 +85,8 @@ Notes:
 1. **Important:** Make the connections short or you are likely to get noisy or even not legible images. More on that is discussed in section [Showcase](#showcase)
 2. **Camera pin** column refers to pinout on OV7725 camera module
 3. **Camera Power Down** pin does not need to be connected to ESP32 GPIO. Instead it may be pulled down to ground with 10 kOhm resistor.
-4. OV7725 supports 10 bit image pixels. In this example the upper 8 bits are processed and saved. The pins corresponding with LSB are marked D0 and D1 and are left not connected.
+4. **Camera Reset** can be configured as either active high or active low (run make menuconfig). The default is for an active low reset.
+5. OV7725 supports 10 bit image pixels. In this example the upper 8 bits are processed and saved. The pins corresponding with LSB are marked D0 and D1 and are left not connected.
 
 If you have [ESP-WROVER V1 (aka DevKitJ)](http://dl.espressif.com/dl/schematics/ESP32-DevKitJ-v1_sch.pdf), then camera connector is already broken out and labeled Camera / JP4. Solder 2.54 mm / 0.1" double row, 18 pin socket in provided space and plug the camera module right into it. Line up 3V3 and GND pins on camera module and on ESP-WROVER. D0 and D1 should be left not connected outside the socket.
 
@@ -94,6 +95,8 @@ To connect the camera to Core Board V2 (aka DevKitC), consider alternate pin map
 ![alt text](pictures/ov7725-alternate-wiring.png "Wiring for Core Board V2 (aka DevKitC)")
 
 2.2uF capacitor conencted between GND and EN pins of ESP32module is added to resolve [ESP32 Reset To Bootloader Issues on Windows #136](https://github.com/espressif/esptool/issues/136).
+
+The "long reset" configuration setting may be needed for some modules.
 
 ### Flash
 

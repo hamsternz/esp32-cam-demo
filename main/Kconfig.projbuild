@@ -66,4 +66,17 @@ menu "Pin Configuration"
         default "2"
 endmenu
 
+config RESET_ACTIVE_HIGH
+    bool "Reset pin active high"
+    default n
+    help
+        Use a high value on the RESET pin reset the camera
+
+config LONG_RESET
+    bool "Use long reset times"
+    default n
+    help
+        Should the camera be held in reset for longer times
+        
+
 endmenu

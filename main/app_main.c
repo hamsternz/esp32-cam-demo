@@ -90,6 +90,16 @@ void app_main()
         .pin_sscb_scl = CONFIG_SCL,
         .pin_reset = CONFIG_RESET,
         .xclk_freq_hz = CONFIG_XCLK_FREQ,
+#ifdef CONFIG_RESET_ACTIVE_HIGH
+        .reset_active_high = 1,
+#else
+        .reset_active_high = 0,
+#endif
+#ifdef CONFIG_LONG_RESET
+        .long_reset =  1,
+#else
+        .long_reset =  0,
+#endif
     };
 
     camera_model_t camera_model;
